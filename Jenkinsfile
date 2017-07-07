@@ -1,5 +1,5 @@
 stage 'Compile'
-node('any') {
+node('localhost') {
     checkout scm
     // use for non multibranch: git 'https://github.com/amuniz/maven-helloworld.git'
     def mvnHome = tool 'maven-3'
@@ -9,13 +9,13 @@ node('any') {
 
 stage 'Test'
 parallel one: {
-    node('any') {
+    node('localhost') {
         unstash 'working-copy'
         def mvnHome = tool 'maven-3'
         sh "${mvnHome}/bin/mvn test -Diterations=10"
     }
 }, two: {
-    node('any') {
+    node('localhost') {
         unstash 'working-copy'
         def mvnHome = tool 'maven-3'
         sh "${mvnHome}/bin/mvn test -Diterations=5"
@@ -23,7 +23,7 @@ parallel one: {
 }, failFast: true
 
 stage 'Code Quality'
-node('any') {
+node('localhost') {
     unstash 'working-copy'
     step([$class: 'CheckStylePublisher'])
     step([$class: 'FindBugsPublisher'])
